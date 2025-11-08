@@ -3,6 +3,30 @@ import os
 import argparse
 
 
+def prompt_yes_no(question: str, default_yes: bool) -> bool:
+    positive_answer = ["y", "yes"]
+    negative_answer = ["n", "no"]
+
+    if default_yes:
+        prompt: str = f"{question} [Y/n]: "
+    else:
+        prompt: str = f"{question} [y/N]: "
+
+    user_response = input(prompt).strip().lower()
+
+    if default_yes:
+        if user_response in negative_answer:
+            return False
+        else:
+            return True
+
+    if not default_yes:
+        if user_response in positive_answer:
+            return True
+        else:
+            return False
+
+
 class File:
 
     def __init__(self, size_mb, output_file):
@@ -11,17 +35,16 @@ class File:
         self.size_bytes = self.size_mb * (1024 * 1024)
         self.outputFile = output_file
 
-    def getSize(self):
-        pass
-        print(f"File size {fileSizeMB}MB")
-
-    def isCorrect(self):
-        if os.path.getsize(self.outputFile) == self.size_bytes:
-            return True
-        else:
+    def isCorrect(self) -> bool:
+        if not os.path.exists(self.outputFile):
             return False
 
-    def ifExisting(self):
+        if os.path.getsize(self.outputFile) != self.size_bytes:
+            return False
+
+        return True
+
+    def ifExisting(self) -> bool:
         return os.path.exists(self.outputFile)
 
     def create(self):
@@ -51,16 +74,27 @@ def main(size: int, output_file: str):
     file = File(size, output_file)
 
     if file.ifExisting():
-        print("File is existing. Closing")
-        exit()
+        if not prompt_yes_no("File is existing do you want to Overwrite", False):
+            print("File would not be Overwrite closing")
+            return
+
+        print("Overwriting file...")
 
     file.create()
 
-    if not file.isCorrect():
-        print("File created but size is not correct")
-        exit()
+    if file.isCorrect():
+        print(f"File created on {output_file} ")
+        return
 
-    print(f"File successfully created on {output_file} ")
+    if prompt_yes_no(
+        "File was created but size was not the expected. \nDo you want to retry",
+        True,
+    ):
+        print("Retrying...")
+        main(size, output_file)
+    else:
+        print(f"File created on {output_file} with WRONG size")
+        return
 
 
 if __name__ == "__main__":
