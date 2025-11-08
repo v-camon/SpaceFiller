@@ -98,6 +98,29 @@ def main(size: int, output_file: str):
 
 
 if __name__ == "__main__":
-    outputFile: str = "spaceFiller"
-    fileSizeMB: int = 3
-    main(fileSizeMB, outputFile)
+    parser = argparse.ArgumentParser(
+        description="SpaceFiller: Creates a dummy file of a specified size.",
+        epilog="Example: python SpaceFiller.py -s 100 -o D:\\kindle_spacer.dat",
+    )
+
+
+    parser.add_argument(
+        "-s",
+        "--size",
+        type=int,
+        default=3, 
+        help="The size of the file to create, in Megabytes (MB). Default is 3.",
+    )
+
+
+    parser.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        default="spaceFiller",
+        help="The name (and path) of the file to create. Default is 'spaceFiller'.",
+    )
+
+    args = parser.parse_args()
+
+    main(args.size, args.output)
