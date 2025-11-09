@@ -1,5 +1,5 @@
 import os
-
+from tqdm import tqdm
 import argparse
 
 
@@ -50,7 +50,13 @@ class File:
     def create(self):
         try:
             with open(self.outputFile, "wb") as file:
-                for i in range(self.size_mb):
+                for i in tqdm(
+                    range(self.size_mb),
+                    desc=f"Creating {self.outputFile}",
+                    unit="MB",
+                    unit_scale=True,
+                    colour="white",
+                ):
                     file.write(self.block_1mb)
 
         except IOError as err:
@@ -59,7 +65,8 @@ class File:
 
         except KeyboardInterrupt:
             print("Process canceled by User")
-            print("Deleting file")
+            print("Deleting file...")
+            exit()
 
             if os.path.exists(self.outputFile):
                 os.remove(self.outputFile)
@@ -87,7 +94,7 @@ def main(size: int, output_file: str):
         return
 
     if prompt_yes_no(
-        "File was created but size was not the expected. \nDo you want to retry",
+        "File creation failed. Do you want to retry",
         True,
     ):
         print("Retrying...")
@@ -103,15 +110,13 @@ if __name__ == "__main__":
         epilog="Example: python SpaceFiller.py -s 100 -o D:\\kindle_spacer.dat",
     )
 
-
     parser.add_argument(
         "-s",
         "--size",
         type=int,
-        default=3, 
-        help="The size of the file to create, in Megabytes (MB). Default is 3.",
+        default=3,
+        help="The size of the file to create, in Megabytes (MB). Default is 3. Minimum 1",
     )
-
 
     parser.add_argument(
         "-o",
