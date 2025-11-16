@@ -1,35 +1,52 @@
 import os
-from tqdm import tqdm
-import argparse
+import customtkinter as ctk
+import tkinter.filedialog as fdialog
 
+units = ["MB", "GB", "TB"]
 
-def prompt_yes_no(question: str, default_yes: bool) -> bool:
-    positive_answer = ["y", "yes"]
-    negative_answer = ["n", "no"]
+fromMB = {"MB": 1, "GB": 1024, "TB": 1024**2}
 
-    if default_yes:
-        prompt: str = f"{question} [Y/n]: "
-    else:
-        prompt: str = f"{question} [y/N]: "
+ctk.set_appearance_mode("system")
+ctk.set_default_color_theme("blue")
 
-    user_response = input(prompt).strip().lower()
+class App(ctk.CTk):
+    def __init__(self) -> None:
 
-    if default_yes:
-        if user_response in negative_answer:
-            return False
-        else:
-            return True
+        super().__init__()
 
-    if not default_yes:
-        if user_response in positive_answer:
-            return True
-        else:
-            return False
+        self.title("Space Filler")
+        self.geometry("300x150")
+
+        self.size_frame = ctk.CTkFrame(
+            master=self,
+            corner_radius=0,
+            border_width=2,
+            fg_color="transparent"
+        )
+        self.size_entry = ctk.CTkEntry(
+            master=self.size_frame,
+            placeholder_text="test",
+            corner_radius=0,
+            border_width=0,
+            fg_color="transparent",
+        )
+        self.size_unit = ctk.CTkComboBox(
+            master=self.size_frame,
+            values=units,
+            corner_radius=0,
+            border_width=0,
+            justify="center",
+            width=70,
+        )
+
+        self.size_entry.grid(row=0, column=0, padx=(2, 0), pady=2)
+        self.size_unit.grid(row=0, column=1, padx=(0, 2), pady=2)
+
+        self.size_frame.grid(row=0, column=0, padx=20, pady=10)
 
 
 class File:
-
-    def __init__(self, size_mb, output_file):
+    def __init__(self, size_mb, output_file) -> None:
         self.block_1mb = b"\0" * (1024 * 1024)
         self.size_mb = size_mb
         self.size_bytes = self.size_mb * (1024 * 1024)
@@ -50,13 +67,7 @@ class File:
     def create(self):
         try:
             with open(self.outputFile, "wb") as file:
-                for i in tqdm(
-                    range(self.size_mb),
-                    desc=f"Creating {self.outputFile}",
-                    unit="MB",
-                    unit_scale=True,
-                    colour="white",
-                ):
+                for i in range(self.size_mb):
                     file.write(self.block_1mb)
 
         except IOError as err:
@@ -77,55 +88,14 @@ class File:
             print(err)
 
 
-def main(size: int, output_file: str):
+def main(size: int, output_file: str) -> None:
     file = File(size, output_file)
-
-    if file.ifExisting():
-        if not prompt_yes_no("File is existing do you want to Overwrite", False):
-            print("File would not be Overwrite closing")
-            return
-
-        print("Overwriting file...")
-
     file.create()
-
-    if file.isCorrect():
-        print(f"File created on {output_file} ")
-        return
-
-    if prompt_yes_no(
-        "File creation failed. Do you want to retry",
-        True,
-    ):
-        print("Retrying...")
-        main(size, output_file)
-    else:
-        print(f"File created on {output_file} with WRONG size")
-        return
+    print(f"File created on {output_file} with WRONG size")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="SpaceFiller: Creates a dummy file of a specified size.",
-        epilog="Example: python SpaceFiller.py -s 100 -o D:\\kindle_spacer.dat",
-    )
 
-    parser.add_argument(
-        "-s",
-        "--size",
-        type=int,
-        default=3,
-        help="The size of the file to create, in Megabytes (MB). Default is 3. Minimum 1",
-    )
-
-    parser.add_argument(
-        "-o",
-        "--output",
-        type=str,
-        default="spaceFiller",
-        help="The name (and path) of the file to create. Default is 'spaceFiller'.",
-    )
-
-    args = parser.parse_args()
-
-    main(args.size, args.output)
+    app = App()
+    app.mainloop()
+    # main(size, output)
