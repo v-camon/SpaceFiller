@@ -17,12 +17,20 @@ class App(ctk.CTk):
         super().__init__()
 
         self.title("Space Filler")
-        self.geometry("600x300")
+        self.geometry("400x200")
+
+        # RESPONSIVE
+        self.columnconfigure(0, weight=2)  # EMPTY
+        self.columnconfigure(1, weight=1)  # CONTENT
+        self.columnconfigure(2, weight=2)  # EMPTY
 
         # COMPONENT
         self.size_frame = ctk.CTkFrame(
             master=self, corner_radius=0, border_width=2, fg_color="transparent"
         )
+        self.size_frame.columnconfigure(1, weight=0)
+        self.size_frame.columnconfigure(0, weight=1)
+
         self.size_entry = ctk.CTkEntry(
             master=self.size_frame,
             placeholder_text="test",
@@ -39,12 +47,10 @@ class App(ctk.CTk):
             width=70,
         )
 
-        self.save_frame = ctk.CTkFrame(
-            master=self, corner_radius=0, border_width=2, width=215, height=28
-        )
-        self.save_frame.grid_propagate(False)
+        self.save_frame = ctk.CTkFrame(master=self, corner_radius=0, border_width=0)
         self.save_frame.columnconfigure(1, weight=0)
         self.save_frame.columnconfigure(0, weight=1)
+
         self.save_label = ctk.CTkLabel(
             master=self.save_frame,
             text="",
@@ -62,13 +68,13 @@ class App(ctk.CTk):
         )
 
         # POSITION
-        self.size_frame.grid(row=0, column=0, padx=20, pady=10)
-        self.size_entry.grid(row=0, column=0, padx=(2, 0), pady=2)
-        self.size_unit.grid(row=0, column=1, padx=(0, 2), pady=2)
+        self.size_frame.grid(row=0, column=1, padx=20, pady=10, sticky="ew")
+        self.size_entry.grid(row=0, column=1, padx=(2, 0), pady=2)
+        self.size_unit.grid(row=0, column=2, padx=(0, 2), pady=2)
 
-        self.save_frame.grid(row=1, column=0, padx=20, pady=10)
-        self.save_label.grid(row=1, column=0)
-        self.save_button.grid(row=1, column=1)
+        self.save_frame.grid(row=1, column=1, padx=20, pady=10, sticky="ew")
+        self.save_label.grid(row=1, column=1)
+        self.save_button.grid(row=1, column=2)
 
 
 class File:
