@@ -9,19 +9,19 @@ fromMB = {"MB": 1, "GB": 1024, "TB": 1024**2}
 ctk.set_appearance_mode("system")
 ctk.set_default_color_theme("blue")
 
+
 class App(ctk.CTk):
     def __init__(self) -> None:
 
+        # WINDOW
         super().__init__()
 
         self.title("Space Filler")
-        self.geometry("300x150")
+        self.geometry("600x300")
 
+        # COMPONENT
         self.size_frame = ctk.CTkFrame(
-            master=self,
-            corner_radius=0,
-            border_width=2,
-            fg_color="transparent"
+            master=self, corner_radius=0, border_width=2, fg_color="transparent"
         )
         self.size_entry = ctk.CTkEntry(
             master=self.size_frame,
@@ -39,10 +39,36 @@ class App(ctk.CTk):
             width=70,
         )
 
+        self.save_frame = ctk.CTkFrame(
+            master=self, corner_radius=0, border_width=2, width=215, height=28
+        )
+        self.save_frame.grid_propagate(False)
+        self.save_frame.columnconfigure(1, weight=0)
+        self.save_frame.columnconfigure(0, weight=1)
+        self.save_label = ctk.CTkLabel(
+            master=self.save_frame,
+            text="",
+            corner_radius=0,
+            width=135,
+            anchor="e",
+        )
+        self.save_button = ctk.CTkButton(
+            master=self.save_frame,
+            text="Destination",
+            command=File.Location,
+            corner_radius=0,
+            border_width=0,
+            width=80,
+        )
+
+        # POSITION
+        self.size_frame.grid(row=0, column=0, padx=20, pady=10)
         self.size_entry.grid(row=0, column=0, padx=(2, 0), pady=2)
         self.size_unit.grid(row=0, column=1, padx=(0, 2), pady=2)
 
-        self.size_frame.grid(row=0, column=0, padx=20, pady=10)
+        self.save_frame.grid(row=1, column=0, padx=20, pady=10)
+        self.save_label.grid(row=1, column=0)
+        self.save_button.grid(row=1, column=1)
 
 
 class File:
@@ -63,6 +89,10 @@ class File:
 
     def ifExisting(self) -> bool:
         return os.path.exists(self.outputFile)
+
+    def Location():
+        location = fdialog.asksaveasfile()
+        app.save_label.configure(text=location.name)
 
     def create(self):
         try:
