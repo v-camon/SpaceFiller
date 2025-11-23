@@ -1,5 +1,5 @@
+import sys
 import os
-import time
 import customtkinter as ctk
 import tkinter.filedialog as fdialog
 
@@ -11,6 +11,15 @@ ctk.set_appearance_mode("system")
 ctk.set_default_color_theme("blue")
 
 
+
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 class File:
     def __init__(self, size_mb: int, output_file: str) -> None:
@@ -44,8 +53,13 @@ class App(ctk.CTk):
         self.title("Space Filler")
         self.geometry("500x350")
         self.resizable(False, False)
-        self.iconbitmap("logo.ico")
-
+        try:
+            icon_file_path = resource_path("logo.ico")
+            self.iconbitmap(icon_file_path)
+        except Exception as e:
+            print(f"Icon could not be loaded: {e}")
+            
+            
         # --- CONTENT CENTER ---
         self.columnconfigure(0, weight=1)  # EMPTY
         self.columnconfigure(1, weight=3)  # CONTENT

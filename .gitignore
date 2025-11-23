@@ -1,1 +1,3 @@
-spaceFiller
+*.sf
+build/
+dist/
