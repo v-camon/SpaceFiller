@@ -8,7 +8,7 @@ UNITS = ["MB", "GB"]
 TO_MB = {"MB": 1, "GB": 1024}
 
 ctk.set_appearance_mode("system")
-ctk.set_default_color_theme("blue")
+ctk.set_default_color_theme("themes/patina.json")
 
 
 
@@ -106,7 +106,6 @@ class App(ctk.CTk):
             placeholder_text="Size (ex. 100)",
             corner_radius=6,
             border_width=0,
-            fg_color=("gray90", "gray20"),
             height=35,
         )
         self.size_entry.grid(row=0, column=0, padx=(0, 5), sticky="ew")
@@ -135,17 +134,16 @@ class App(ctk.CTk):
         self.file_label = ctk.CTkLabel(
             master=self.file_frame,
             textvariable=self.file_path,
-            fg_color=("gray90", "gray20"),
             corner_radius=6,
             height=35,
             anchor="e",
+            fg_color=ctk.ThemeManager.theme["CTkEntry"]["fg_color"],
         )
         self.file_label.grid(row=0, column=0, sticky="ew", padx=(0, 5))
 
         self.file_button = ctk.CTkButton(
             master=self.file_frame,
             text="SAVE AS",
-            # command=File.Location,
             command=self.select_location,
             width=100,
             height=35,
@@ -166,7 +164,6 @@ class App(ctk.CTk):
         self.status_label = ctk.CTkLabel(
             master=self,
             text="Waiting for file destination",
-            text_color="gray",
             font=(
                 "Roboto",
                 14,
